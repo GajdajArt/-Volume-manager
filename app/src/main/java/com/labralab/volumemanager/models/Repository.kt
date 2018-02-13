@@ -56,6 +56,32 @@ class Repository() {
     fun setDefaultParams(volParams: VolumeParams){
 
 
+
+        val result: RealmResults<VolumeParams> = realm.where(VolumeParams::class.java)
+                .equalTo("title", "default")
+                .findAll()
+
+        if (result.isEmpty()){
+            realm.insert(volParams)
+        } else{
+            var oldParams = result.first()
+
+            oldParams!!.systemLevel = volParams!!.systemLevel
+            oldParams!!.musicLevel = volParams!!.musicLevel
+            oldParams!!.voiceCallLevel = volParams!!.voiceCallLevel
+            oldParams!!.notificationLevel = volParams!!.notificationLevel
+            oldParams!!.ringLevel = volParams!!.ringLevel
+        }
+    }
+
+    fun getDefaultParams(): VolumeParams?{
+
+        val result: RealmResults<VolumeParams> = realm.where(VolumeParams::class.java)
+                .equalTo("title", "default")
+                .findAll()
+
+        return result.first()
+
     }
 
 }

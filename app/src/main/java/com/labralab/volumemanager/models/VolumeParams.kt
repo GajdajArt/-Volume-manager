@@ -19,6 +19,7 @@ open class VolumeParams : RealmObject(){
     var ringLevel: Int = 0
     var voiceCallLevel: Int = 0
     var systemLevel: Int = 0
+    var musicLevel: Int = 0
     var isVibration: Boolean = false
 }
 

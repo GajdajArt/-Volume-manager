@@ -22,6 +22,7 @@ public class TestReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         int pos = intent.getIntExtra("pos", 0);
+        int state = intent.getIntExtra("state", 0);
         String title = intent.getStringExtra("title");
         Repository repository = new Repository();
         DayParamsList day = repository.getDay(title);
@@ -30,6 +31,7 @@ public class TestReceiver extends BroadcastReceiver {
         v.vibrate(500);
 
         volumeManager = new VolumeManager(context);
+        volumeManager.setParams(day.getParamsList().get(pos), state);
         volumeManager.startAlarmManager(day);
         volumeManager.showNotification(title, title);
 

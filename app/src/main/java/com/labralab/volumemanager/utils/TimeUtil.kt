@@ -14,7 +14,6 @@ class TimeUtil {
             const val TORN_OFF = 0
             const val TORN_ON = 1
 
-
         fun getNearestTime(params: List<VolumeParams>): Int {
 
 
@@ -132,7 +131,7 @@ class TimeUtil {
             }
 
             if (stopTime < nawTime) {
-                state = TORN_ON
+                state = TORN_OFF
 
             }
 

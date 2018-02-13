@@ -5,7 +5,6 @@ import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
@@ -14,58 +13,62 @@ import com.labralab.volumemanager.R
 import com.labralab.volumemanager.utils.TimeUtil
 import com.labralab.volumemanager.views.MainActivity
 import io.realm.Realm
-import java.util.*
 
 
-class VolumeManager(var context: Context? = null) : BroadcastReceiver() {
+class VolumeManager(var context: Context? = null) {
 
-
-    //    var context: Context? = null
     private var am: AlarmManager? = null
     var realm: Realm = Realm.getDefaultInstance()
     private var repository: Repository? = null
     private var pi: PendingIntent? = null
 
-    companion object {
-
-        const val TORN_OFF = 0
-        const val TORN_ON = 1
-    }
-
     init {
 
-//        this.context = context
         this.repository = Repository()
         am = this.context!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     }
 
-    override fun onReceive(context: Context?, intent: Intent?) {
-
-        val pos = intent!!.getIntExtra("pos", 0)
-        val title = intent!!.getStringExtra("title")
-        val state = intent!!.getIntExtra("state", 1)
-
-        val day = repository!!.getDay(title)
-        showNotification(title, day.paramsList!![pos]!!.title)
-        startAlarmManager(day)
-
-    }
-
 
     @SuppressLint("ServiceCast")
-    fun setParams(params: VolumeParams) {
+    fun setParams(params: VolumeParams, state: Int) {
 
-        var mgr: AudioManager = this.context!!.getSystemService(Context.ACCOUNT_SERVICE) as AudioManager
+        var mgr: AudioManager = this.context!!.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-        mgr.setStreamVolume(AudioManager.STREAM_SYSTEM, params.systemLevel, AudioManager.FLAG_PLAY_SOUND)
-        mgr.setStreamVolume(AudioManager.STREAM_NOTIFICATION, params.notificationLevel, AudioManager.FLAG_PLAY_SOUND)
-        mgr.setStreamVolume(AudioManager.STREAM_RING, params.ringLevel, AudioManager.FLAG_PLAY_SOUND)
-        mgr.setStreamVolume(AudioManager.STREAM_VOICE_CALL, params.voiceCallLevel, AudioManager.FLAG_PLAY_SOUND)
+        when (state){
+            TimeUtil.TORN_ON -> {
+
+                mgr.ringerMode = if (params.isVibration) {
+                    AudioManager.RINGER_MODE_VIBRATE
+                } else {
+                    AudioManager.RINGER_MODE_SILENT
+                }
+                mgr.setStreamVolume(AudioManager.STREAM_SYSTEM, params.systemLevel, AudioManager.FLAG_PLAY_SOUND)
+                mgr.setStreamVolume(AudioManager.STREAM_NOTIFICATION, params.notificationLevel, AudioManager.FLAG_PLAY_SOUND)
+                mgr.setStreamVolume(AudioManager.STREAM_RING, params.ringLevel, AudioManager.FLAG_PLAY_SOUND)
+                mgr.setStreamVolume(AudioManager.STREAM_VOICE_CALL, params.voiceCallLevel, AudioManager.FLAG_PLAY_SOUND)
+                mgr.setStreamVolume(AudioManager.STREAM_MUSIC, params.musicLevel, AudioManager.STREAM_MUSIC)
+            }
+
+            TimeUtil.TORN_OFF -> {
+
+                val default = repository!!.getDefaultParams()
+
+                mgr.ringerMode = if (default!!.isVibration) {
+                    AudioManager.RINGER_MODE_VIBRATE
+                } else {
+                    AudioManager.RINGER_MODE_SILENT
+                }
+                mgr.setStreamVolume(AudioManager.STREAM_SYSTEM, default!!.systemLevel, AudioManager.FLAG_PLAY_SOUND)
+                mgr.setStreamVolume(AudioManager.STREAM_NOTIFICATION, default!!.notificationLevel, AudioManager.FLAG_PLAY_SOUND)
+                mgr.setStreamVolume(AudioManager.STREAM_RING, default!!.ringLevel, AudioManager.FLAG_PLAY_SOUND)
+                mgr.setStreamVolume(AudioManager.STREAM_VOICE_CALL, default!!.voiceCallLevel, AudioManager.FLAG_PLAY_SOUND)
+                mgr.setStreamVolume(AudioManager.STREAM_MUSIC, default!!.musicLevel, AudioManager.STREAM_MUSIC)
+
+            }
+        }
     }
 
     fun startAlarmManager(day: DayParamsList) {
-
-        var state: Int
 
         var pos = TimeUtil.getNearestTime(day.paramsList!!)
         var volParams = day!!.paramsList!![pos]
@@ -80,24 +83,15 @@ class VolumeManager(var context: Context? = null) : BroadcastReceiver() {
 
         pi = PendingIntent.getBroadcast(this.context, 0, intent, 0)
 
-
-//Test
-        val c = Calendar.getInstance()
-        c.timeInMillis = System.currentTimeMillis()
-        c.add(Calendar.SECOND, 2)
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            am!!.setExact(AlarmManager.RTC_WAKEUP, c.timeInMillis, pi)
+            am!!.setExact(AlarmManager.RTC_WAKEUP, interval, pi)
         } else {
-            am!!.set(AlarmManager.RTC_WAKEUP, c.timeInMillis, pi)
+            am!!.set(AlarmManager.RTC_WAKEUP, interval, pi)
         }
     }
 
     fun cancelAlarm() {
 
-
-        val alarmManager = context!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         var intent = Intent("volumeManager")
 
         pi = PendingIntent.getBroadcast(this.context, 0, intent, 0)
@@ -118,7 +112,16 @@ class VolumeManager(var context: Context? = null) : BroadcastReceiver() {
 
     fun setDefaultParams() {
 
-        var def: VolumeParams = VolumeParams()
+        var mgr: AudioManager = this.context!!.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+        var def = VolumeParams()
+        def.title = "default"
+        def.musicLevel = mgr.getStreamVolume(AudioManager.STREAM_MUSIC)
+        def.voiceCallLevel = mgr.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
+        def.notificationLevel = mgr.getStreamVolume(AudioManager.STREAM_NOTIFICATION)
+        def.ringLevel = mgr.getStreamVolume(AudioManager.STREAM_RING)
+        def.systemLevel = mgr.getStreamVolume(AudioManager.STREAM_SYSTEM)
+
         repository!!.setDefaultParams(def)
     }
 

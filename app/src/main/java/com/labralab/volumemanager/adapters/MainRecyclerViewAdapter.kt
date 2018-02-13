@@ -42,6 +42,7 @@ class MainRecyclerViewAdapter(items: List<DayParamsList>, mainActivity: MainActi
         holder.title.text = item.title
         holder.isRunning.isChecked = item.state!!
 
+
         holder.isRunning.setOnCheckedChangeListener { _, b ->
 
             realm!!.executeTransaction({ _ ->
@@ -50,6 +51,7 @@ class MainRecyclerViewAdapter(items: List<DayParamsList>, mainActivity: MainActi
 
                 if(b){
                     mainActivity!!.volumeManager!!.startAlarmManager(item)
+                    mainActivity!!.volumeManager!!.setDefaultParams()
                 }else{
                     mainActivity!!.volumeManager!!.cancelAlarm()
                 }

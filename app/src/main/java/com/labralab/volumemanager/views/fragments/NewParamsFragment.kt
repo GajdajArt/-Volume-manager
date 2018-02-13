@@ -101,6 +101,7 @@ class NewParamsFragment : Fragment() {
                         volumeParams.ringLevel = ringLevel.progress
                         volumeParams.voiceCallLevel = voiceCallLevel.progress
                         volumeParams.systemLevel = systemLevel.progress
+                        volumeParams.musicLevel = musicLevel.progress
                         volumeParams.isVibration = vibrationCB.isChecked
 
                         dayActivity!!.dayParamList!!.paramsList!!.add(volumeParams)
