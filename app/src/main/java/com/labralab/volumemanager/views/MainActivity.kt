@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.view.Menu
-import android.view.MenuItem
 import com.labralab.volumemanager.R
 import com.labralab.volumemanager.adapters.MainRecyclerViewAdapter
 import com.labralab.volumemanager.models.DayParamsList
@@ -47,27 +45,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
+//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        menuInflater.inflate(R.menu.menu_main, menu)
+//        return true
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//
+//        val id = item.itemId
+//
+//
+//        return if (id == R.id.action_settings) {
+//            true
+//        } else super.onOptionsItemSelected(item)
+//
+//    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        val id = item.itemId
-
-
-        return if (id == R.id.action_settings) {
-            true
-        } else super.onOptionsItemSelected(item)
-
+    override fun onResume() {
+        super.onResume()
+        adapterNotifyDataSetChanged()
     }
 
     fun adapterNotifyDataSetChanged(){
 
         val repository = Repository()
-
         adapter!!.items = repository.getDayList()
         adapter!!.notifyDataSetChanged()
     }

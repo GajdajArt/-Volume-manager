@@ -1,5 +1,6 @@
 package com.labralab.volumemanager.utils
 
+import android.os.Bundle
 import com.labralab.volumemanager.models.VolumeParams
 import java.util.*
 
@@ -55,12 +56,14 @@ class TimeUtil {
             return stopPos
         }
 
-        fun getDiff(volParams: VolumeParams?): Long {
+        fun getDiff(volParams: VolumeParams?): Bundle {
+
+            var b = Bundle()
 
             val date = Date()
 
-
             var interval: Long
+            var state: Int
 
 
             var nawTime = Calendar.getInstance()
@@ -88,22 +91,31 @@ class TimeUtil {
             stopTime.add(Calendar.MINUTE, volParams!!.stopMinutes)
 
 
-            interval = if (startTime < nawTime) {
-                stopTime.timeInMillis
+            if (startTime < nawTime) {
+                interval = stopTime.timeInMillis
+                state = TORN_OFF
+
             } else {
-                startTime.timeInMillis
+                interval = startTime.timeInMillis
+                state = TORN_ON
             }
 
             if (stopTime < nawTime) {
                 startTime.add(Calendar.HOUR_OF_DAY, 24)
                 interval = startTime.timeInMillis
+                state = TORN_ON
             }
 
-            return interval
+            b.putLong("interval", interval)
+            b.putInt("state", state)
+
+            return b
         }
 
 
         fun getState(volParams: VolumeParams?): Int{
+
+            val date = Date()
 
             var state: Int
 
@@ -111,9 +123,19 @@ class TimeUtil {
             var startTime = Calendar.getInstance()
             var stopTime = Calendar.getInstance()
 
-            nawTime.timeInMillis = System.currentTimeMillis()
-            startTime.timeInMillis = 0
-            stopTime.timeInMillis = 0
+            startTime.time = date
+            startTime.set(Calendar.HOUR_OF_DAY, 0)
+            startTime.set(Calendar.MINUTE, 0)
+            startTime.set(Calendar.SECOND, 0)
+            startTime.set(Calendar.MILLISECOND, 0)
+
+            stopTime.time = date
+            stopTime.set(Calendar.HOUR_OF_DAY, 0)
+            stopTime.set(Calendar.MINUTE, 0)
+            stopTime.set(Calendar.SECOND, 0)
+            stopTime.set(Calendar.MILLISECOND, 0)
+
+            nawTime.time = date
 
 
             startTime.add(Calendar.HOUR_OF_DAY, volParams!!.startHours)
@@ -122,19 +144,15 @@ class TimeUtil {
             stopTime.add(Calendar.HOUR_OF_DAY, volParams!!.stopHours)
             stopTime.add(Calendar.MINUTE, volParams!!.stopMinutes)
 
-
             if (startTime < nawTime) {
-
                 state = TORN_OFF
             } else {
                 state = TORN_ON
             }
 
             if (stopTime < nawTime) {
-                state = TORN_OFF
-
+                state = TORN_ON
             }
-
             return state
         }
     }

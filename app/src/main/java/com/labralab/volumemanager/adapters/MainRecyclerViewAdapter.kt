@@ -8,13 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Switch
 import android.widget.TextView
+import android.widget.Toast
 import com.labralab.volumemanager.R
 import com.labralab.volumemanager.models.DayParamsList
 import com.labralab.volumemanager.views.DayActivity
 import com.labralab.volumemanager.views.MainActivity
 import io.realm.Realm
 import java.util.*
-
 
 
 class MainRecyclerViewAdapter(items: List<DayParamsList>, mainActivity: MainActivity) : RecyclerView.Adapter<MainRecyclerViewHolder>() {
@@ -42,33 +42,45 @@ class MainRecyclerViewAdapter(items: List<DayParamsList>, mainActivity: MainActi
         holder.title.text = item.title
         holder.isRunning.isChecked = item.state!!
 
+        if (!item.paramsList!!.isEmpty()) {
 
-        holder.isRunning.setOnCheckedChangeListener { _, b ->
+            holder.isRunning.setOnCheckedChangeListener { _, b ->
 
-            realm!!.executeTransaction({ _ ->
 
-                item.state = b
+                realm!!.executeTransaction({ _ ->
 
-                if(b){
-                    mainActivity!!.volumeManager!!.startAlarmManager(item)
-                    mainActivity!!.volumeManager!!.setDefaultParams()
-                }else{
-                    mainActivity!!.volumeManager!!.cancelAlarm()
-                }
+                    item.state = b
 
-                if (items.size > 1) {
                     if (b) {
-                        for (day in items) {
+                        mainActivity!!.volumeManager!!.cancelAlarm()
+                        mainActivity!!.volumeManager!!.checkTheSate(item)
+                        mainActivity!!.volumeManager!!.setDefaultParams()
+                        mainActivity!!.volumeManager!!.startAlarmManager(item)
 
-                            if (item.title != day.title) {
-                                day.state = false
-                            }
-                        }
-                        this@MainRecyclerViewAdapter.notifyDataSetChanged()
+                        Toast.makeText(mainActivity, "${item.title} запущен", Toast.LENGTH_SHORT).show()
+
+                    } else {
+                        mainActivity!!.volumeManager!!.cancelAlarm()
+
+                        Toast.makeText(mainActivity, "${item.title} отключен", Toast.LENGTH_SHORT).show()
                     }
-                }
-            })
 
+                    if (items.size > 1) {
+                        if (b) {
+                            for (day in items) {
+
+                                if (item.title != day.title) {
+                                    day.state = false
+                                }
+                            }
+                            this@MainRecyclerViewAdapter.notifyDataSetChanged()
+                        }
+                    }
+                })
+            }
+
+        } else {
+            Toast.makeText(mainActivity, "Заполните распорядок дня", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -105,7 +117,7 @@ class MainRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     override fun onLongClick(p0: View?): Boolean {
 
         val builder = AlertDialog.Builder(p0!!.context)
-        builder.setMessage("Удалить?")
+        builder.setMessage("Удалить ${title.text}?")
         builder.setPositiveButton("Да", { dialog, _ ->
             removeDay(title.text.toString())
 

@@ -1,35 +1,22 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.labralab.volumemanager.views.fragments.NewParamsFragment"
-    android:padding="16dp">
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/tILParamsTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColorHint="@android:color/tab_indicator_text">
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/title"
-            android:inputType="textCapWords"
-            android:textSize="16sp" />
-    </android.support.design.widget.TextInputLayout>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.labralab.volumemanager.views.fragments.NewParamsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/tILStartTime"
+            android:id="@+id/tILParamsTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="@android:color/tab_indicator_text"
-            android:layout_weight="1">
+            android:textColorHint="@android:color/tab_indicator_text">
+
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -38,65 +25,105 @@
                 android:textSize="16sp" />
         </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/tILStopTime"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="@android:color/tab_indicator_text"
-            android:layout_weight="1">
-            <EditText
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tILStartTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/title"
-                android:inputType="textCapWords"
-                android:textSize="16sp" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:textColorHint="@android:color/tab_indicator_text">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Время начала"
+                    android:inputType="textCapWords"
+                    android:textSize="20sp" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tILStopTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:textColorHint="@android:color/tab_indicator_text">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Время окончания"
+                    android:inputType="textCapWords"
+                    android:textSize="20sp" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Громкость музыки" />
+
+        <SeekBar
+            android:id="@+id/musicLevel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Громкость уведомлений" />
+
+        <SeekBar
+            android:id="@+id/notificationLevel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Громкость звонков" />
+
+        <SeekBar
+            android:id="@+id/ringLevel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Громкость голоса"/>-->
+        <!--<SeekBar-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/voiceCallLevel"/>-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Громкость системы" />
+
+        <SeekBar
+            android:id="@+id/systemLevel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+        <CheckBox
+            android:id="@+id/vibrationCB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/vibro"
+            android:layout_marginTop="10dp"/>
     </LinearLayout>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Громкость музыки"/>
-    <SeekBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/musicLevel"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Громкость уведомлений"/>
-    <SeekBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/notificationLevel"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Громкость звонков"/>
-    <SeekBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/ringLevel"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Громкость голоса"/>
-    <SeekBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/voiceCallLevel"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Громкость системы"/>
-    <SeekBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/systemLevel"/>
-    <CheckBox
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/vibro"
-        android:id="@+id/vibrationCB"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/paramsDoneFab"
@@ -104,6 +131,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
         android:layout_margin="@dimen/fab_margin"
-        />
+        android:src="@drawable/ic_done_white_24dp"
+        app:elevation="0dp"/>
 
-</LinearLayout>
+</FrameLayout>

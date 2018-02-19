@@ -42,9 +42,10 @@ class DayFragment : Fragment() {
 
             lists.clear()
             lists.addAll(dayActivity!!.dayParamList!!.paramsList!!)
+            val state = dayActivity!!.dayParamList!!.state
 
             val layoutManager = LinearLayoutManager(dayActivity)
-            adapter = ParamsRecyclerViewAdapter(lists)
+            adapter = ParamsRecyclerViewAdapter(lists, state!!)
 
             paramRecyclerView.layoutManager = layoutManager
             paramRecyclerView.adapter = adapter

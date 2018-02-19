@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.os.Build
 import com.labralab.volumemanager.R
@@ -34,7 +35,7 @@ class VolumeManager(var context: Context? = null) {
 
         var mgr: AudioManager = this.context!!.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-        when (state){
+        when (state) {
             TimeUtil.TORN_ON -> {
 
                 mgr.ringerMode = if (params.isVibration) {
@@ -45,7 +46,6 @@ class VolumeManager(var context: Context? = null) {
                 mgr.setStreamVolume(AudioManager.STREAM_SYSTEM, params.systemLevel, AudioManager.FLAG_PLAY_SOUND)
                 mgr.setStreamVolume(AudioManager.STREAM_NOTIFICATION, params.notificationLevel, AudioManager.FLAG_PLAY_SOUND)
                 mgr.setStreamVolume(AudioManager.STREAM_RING, params.ringLevel, AudioManager.FLAG_PLAY_SOUND)
-                mgr.setStreamVolume(AudioManager.STREAM_VOICE_CALL, params.voiceCallLevel, AudioManager.FLAG_PLAY_SOUND)
                 mgr.setStreamVolume(AudioManager.STREAM_MUSIC, params.musicLevel, AudioManager.STREAM_MUSIC)
             }
 
@@ -61,7 +61,6 @@ class VolumeManager(var context: Context? = null) {
                 mgr.setStreamVolume(AudioManager.STREAM_SYSTEM, default!!.systemLevel, AudioManager.FLAG_PLAY_SOUND)
                 mgr.setStreamVolume(AudioManager.STREAM_NOTIFICATION, default!!.notificationLevel, AudioManager.FLAG_PLAY_SOUND)
                 mgr.setStreamVolume(AudioManager.STREAM_RING, default!!.ringLevel, AudioManager.FLAG_PLAY_SOUND)
-                mgr.setStreamVolume(AudioManager.STREAM_VOICE_CALL, default!!.voiceCallLevel, AudioManager.FLAG_PLAY_SOUND)
                 mgr.setStreamVolume(AudioManager.STREAM_MUSIC, default!!.musicLevel, AudioManager.STREAM_MUSIC)
 
             }
@@ -70,18 +69,21 @@ class VolumeManager(var context: Context? = null) {
 
     fun startAlarmManager(day: DayParamsList) {
 
+
         var pos = TimeUtil.getNearestTime(day.paramsList!!)
         var volParams = day!!.paramsList!![pos]
+        val b = TimeUtil.getDiff(volParams)
 
-        var interval = TimeUtil.getDiff(volParams)
+        val interval = b.getLong("interval")
+        val state = b.getInt("state")
 
 
         var intent = Intent("volumeManager")
         intent.putExtra("title", day.title)
         intent.putExtra("pos", pos)
-        intent.putExtra("state", TimeUtil.getState(volParams))
+        intent.putExtra("state", state)
 
-        pi = PendingIntent.getBroadcast(this.context, 0, intent, 0)
+        pi = PendingIntent.getBroadcast(this.context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             am!!.setExact(AlarmManager.RTC_WAKEUP, interval, pi)
@@ -117,7 +119,6 @@ class VolumeManager(var context: Context? = null) {
         var def = VolumeParams()
         def.title = "default"
         def.musicLevel = mgr.getStreamVolume(AudioManager.STREAM_MUSIC)
-        def.voiceCallLevel = mgr.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
         def.notificationLevel = mgr.getStreamVolume(AudioManager.STREAM_NOTIFICATION)
         def.ringLevel = mgr.getStreamVolume(AudioManager.STREAM_RING)
         def.systemLevel = mgr.getStreamVolume(AudioManager.STREAM_SYSTEM)
@@ -125,37 +126,47 @@ class VolumeManager(var context: Context? = null) {
         repository!!.setDefaultParams(def)
     }
 
-    fun showNotification(dayTitle: String, paramsTitle: String) {
+    fun showNotification(dayTitle: String, state: Int) {
+
+        val stateStr = if (state == TimeUtil.TORN_ON) {
+            "включен"
+        } else {
+            "выключен"
+        }
 
         val notificationIntent = Intent(this.context, MainActivity::class.java)
         val contentIntent = PendingIntent.getActivity(this.context,
                 0, notificationIntent,
                 PendingIntent.FLAG_CANCEL_CURRENT)
 
-        val res = this.context!!.resources
         val builder = Notification.Builder(this.context)
 
         builder.setContentIntent(contentIntent)
-                .setSmallIcon(R.drawable.notification_icon_background)
-                // большая картинк
-
-                //.setTicker(res.getString(R.string.warning)) // текст в строке состояния
-                .setTicker("Последнее китайское предупреждение!")
+                .setLargeIcon(BitmapFactory.decodeResource(context!!.resources,
+                        R.mipmap.ic_launcher))
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setTicker(context!!.getString(R.string.app_name))
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true)
-                //.setContentTitle(res.getString(R.string.notifytitle)) // Заголовок уведомления
-                .setContentTitle(dayTitle)
-                //.setContentText(res.getString(R.string.notifytext))
-                .setContentText(paramsTitle) // Текст уведомления
+                .setContentTitle("Параметры звука изменены")
+                .setContentText("$dayTitle $stateStr") // Текст уведомления
 
-        // Notification notification = builder.getNotification(); // до API 16
-        var notification: Notification? = null
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            notification = builder.build()
-        }
+        var notification = builder.build()
 
         val notificationManager = this.context!!
                 .getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(1, notification)
+    }
+
+    fun checkTheSate(day: DayParamsList) {
+
+        val pos = TimeUtil.getNearestTime(day.paramsList!!)
+        val volParams = day!!.paramsList!![pos]
+        val state = TimeUtil.getState(volParams)
+
+        if (state == TimeUtil.TORN_OFF) {
+            setParams(volParams!!, TimeUtil.TORN_ON)
+            showNotification(day.title!!, TimeUtil.TORN_ON)
+        }
     }
 }

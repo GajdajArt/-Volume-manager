@@ -4,6 +4,8 @@ package com.labralab.volumemanager.views.fragments
 import android.app.AlertDialog
 import android.app.TimePickerDialog
 import android.app.TimePickerDialog.OnTimeSetListener
+import android.content.Context
+import android.media.AudioManager
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.text.InputType
@@ -18,9 +20,12 @@ import com.labralab.volumemanager.models.VolumeParams
 import com.labralab.volumemanager.views.DayActivity
 import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_new_params.*
+import java.util.*
 
 
 class NewParamsFragment : Fragment() {
+
+    private var oldTitle: String? = null
 
     private var etTitle: EditText? = null
     private var etStart: EditText? = null
@@ -51,14 +56,36 @@ class NewParamsFragment : Fragment() {
         etStart = tILStartTime.editText as EditText
         etStop = tILStopTime.editText as EditText
 
+
+        val mgr: AudioManager = this.context!!.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+        notificationLevel.max = mgr.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION)
+        ringLevel.max = mgr.getStreamMaxVolume(AudioManager.STREAM_RING)
+        systemLevel.max = mgr.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)
+        musicLevel.max = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+
         if (this.arguments != null) {
 
-            var title = arguments.getString("title")
-            var volumeParams = dayActivity!!.dayParamList!!.getVolumeParamsItem(title)
+            oldTitle = arguments.getString("title")
+            var volumeParams = dayActivity!!.dayParamList!!.getVolumeParamsItem(oldTitle!!)
+
+            startHours = volumeParams!!.startHours
+            startMinutes = volumeParams.startMinutes
+            stopHours = volumeParams.stopHours
+            stopMinutes = volumeParams.stopMinutes
+
+            val stopMinFormat = String.format("%02d", stopMinutes)
+            val startMinFormat = String.format("%02d", startMinutes)
 
             etTitle!!.setText(volumeParams!!.title)
+            etStart!!.setText("$startHours : $startMinFormat")
+            etStop!!.setText("$stopHours : $stopMinFormat")
+
+
             notificationLevel.progress = volumeParams!!.notificationLevel
-//            .....
+            ringLevel.progress = volumeParams!!.ringLevel
+            systemLevel.progress = volumeParams!!.systemLevel
+            musicLevel.progress = volumeParams!!.musicLevel
 
         }
 
@@ -77,6 +104,7 @@ class NewParamsFragment : Fragment() {
             if (motionEvent.action == MotionEvent.ACTION_UP) {
                 etStart!!.inputType = InputType.TYPE_NULL
                 val tpd = TimePickerDialog(dayActivity, stopCallBack, stopHours, stopMinutes, true)
+
                 tpd.show()
             }
             true
@@ -89,33 +117,51 @@ class NewParamsFragment : Fragment() {
 
                 if (isTimeImposition()) {
 
+
                     realm.executeTransaction({ _ ->
+
+                        //TEST
+                        val c = Calendar.getInstance()
+                        c.timeInMillis = System.currentTimeMillis()
+
 
                         val volumeParams = VolumeParams()
                         volumeParams.title = etTitle!!.text.toString()
+//
+//                        volumeParams.startHours = c.get(Calendar.HOUR_OF_DAY)
+//                        volumeParams.startMinutes = c.get(Calendar.MINUTE) + 1
+//                        volumeParams.stopHours = c.get(Calendar.HOUR_OF_DAY)
+//                        volumeParams.stopMinutes = c.get(Calendar.MINUTE) + 2
                         volumeParams.startHours = startHours
                         volumeParams.startMinutes = startMinutes
                         volumeParams.stopHours = stopHours
                         volumeParams.stopMinutes = stopMinutes
                         volumeParams.notificationLevel = notificationLevel.progress
                         volumeParams.ringLevel = ringLevel.progress
-                        volumeParams.voiceCallLevel = voiceCallLevel.progress
                         volumeParams.systemLevel = systemLevel.progress
                         volumeParams.musicLevel = musicLevel.progress
                         volumeParams.isVibration = vibrationCB.isChecked
 
-                        dayActivity!!.dayParamList!!.paramsList!!.add(volumeParams)
-//                dayActivity!!.dayFragment!!.adapter!!.notifyDataSetChanged()
+                        if (this.arguments == null) {
+                            dayActivity!!.dayParamList!!.paramsList!!.add(volumeParams)
+                        } else {
+                            var item = dayActivity!!.dayParamList!!.getVolumeParamsItem(oldTitle!!)
+                            dayActivity!!.dayParamList!!.paramsList!!.remove(item)
+                            dayActivity!!.dayParamList!!.paramsList!!.add(volumeParams)
+                        }
 
                         dayActivity!!.supportFragmentManager.popBackStack()
+
                     })
+
+
                 } else {
                     showDialog()
                 }
-            }else{
-                if(etTitle!!.text.isEmpty()){
+            } else {
+                if (etTitle!!.text.isEmpty()) {
                     Toast.makeText(activity, "Введите название", Toast.LENGTH_SHORT).show()
-                }else{
+                } else {
                     Toast.makeText(activity, "Введите время", Toast.LENGTH_SHORT).show()
                 }
 
@@ -132,13 +178,17 @@ class NewParamsFragment : Fragment() {
     private var startCallBack: OnTimeSetListener = OnTimeSetListener { _, hourOfDay, minute ->
         startHours = hourOfDay
         startMinutes = minute
-        etStart!!.setText("$startHours : $startMinutes")
+        val startMinFormat = String.format("%02d", startMinutes)
+
+        etStart!!.setText("$startHours : $startMinFormat")
     }
 
     private var stopCallBack: OnTimeSetListener = OnTimeSetListener { _, hourOfDay, minute ->
         stopHours = hourOfDay
         stopMinutes = minute
-        etStop!!.setText("$stopHours : $stopMinutes")
+        val stopMinFormat = String.format("%02d", minute)
+
+        etStop!!.setText("$stopHours : $stopMinFormat")
     }
 
     private fun isTimeImposition(): Boolean {

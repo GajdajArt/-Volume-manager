@@ -7,9 +7,9 @@ import io.realm.RealmResults
 /**
  * Created by pc on 26.11.2017.
  */
-class Repository() {
+class Repository {
 
-    val realm = Realm.getDefaultInstance()
+    val realm = Realm.getDefaultInstance()!!
 
     fun createDay (day: DayParamsList){
 
@@ -68,7 +68,6 @@ class Repository() {
 
             oldParams!!.systemLevel = volParams!!.systemLevel
             oldParams!!.musicLevel = volParams!!.musicLevel
-            oldParams!!.voiceCallLevel = volParams!!.voiceCallLevel
             oldParams!!.notificationLevel = volParams!!.notificationLevel
             oldParams!!.ringLevel = volParams!!.ringLevel
         }
