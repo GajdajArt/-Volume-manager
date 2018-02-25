@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.labralab.volumemanager.R
 import com.labralab.volumemanager.adapters.ParamsRecyclerViewAdapter
 import com.labralab.volumemanager.models.VolumeParams
@@ -44,6 +45,8 @@ class DayFragment : Fragment() {
             lists.addAll(dayActivity!!.dayParamList!!.paramsList!!)
             val state = dayActivity!!.dayParamList!!.state
 
+            showHint()
+
             val layoutManager = LinearLayoutManager(dayActivity)
             adapter = ParamsRecyclerViewAdapter(lists, state!!)
 
@@ -65,5 +68,14 @@ class DayFragment : Fragment() {
 
         }
     }
+
+    private fun showHint() {
+
+        if (lists.isEmpty()) {
+            Toast.makeText(activity, "Нажмите на \"+\" для добавления настроек", Toast.LENGTH_SHORT)
+                    .show()
+        }
+    }
+
 }// Required empty public constructor
 

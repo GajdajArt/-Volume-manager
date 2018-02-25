@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.widget.Toast
 import com.labralab.volumemanager.R
 import com.labralab.volumemanager.adapters.MainRecyclerViewAdapter
 import com.labralab.volumemanager.models.DayParamsList
@@ -30,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         volumeManager = VolumeManager(applicationContext)
 
         lists = repository!!.getDayList()
+        showHint()
 
         val layoutManager = LinearLayoutManager(this)
         adapter = MainRecyclerViewAdapter(lists, this)
@@ -67,10 +69,21 @@ class MainActivity : AppCompatActivity() {
         adapterNotifyDataSetChanged()
     }
 
-    fun adapterNotifyDataSetChanged(){
+    fun adapterNotifyDataSetChanged() {
 
         val repository = Repository()
-        adapter!!.items = repository.getDayList()
+        lists = repository.getDayList()
+        adapter!!.items = lists
         adapter!!.notifyDataSetChanged()
+        showHint()
+
+    }
+
+    private fun showHint(){
+
+        if(lists.isEmpty()){
+            Toast.makeText(applicationContext, "Нажмите на \"+\" для сохдания списка настроек", Toast.LENGTH_SHORT)
+                    .show()
+        }
     }
 }

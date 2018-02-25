@@ -43,7 +43,7 @@ class MainRecyclerViewAdapter(items: List<DayParamsList>, mainActivity: MainActi
         holder.isRunning.isChecked = item.state!!
 
         if (!item.paramsList!!.isEmpty()) {
-
+            holder.isRunning.visibility = View.VISIBLE
             holder.isRunning.setOnCheckedChangeListener { _, b ->
 
 
@@ -80,7 +80,8 @@ class MainRecyclerViewAdapter(items: List<DayParamsList>, mainActivity: MainActi
             }
 
         } else {
-            Toast.makeText(mainActivity, "Заполните распорядок дня", Toast.LENGTH_SHORT).show()
+            Toast.makeText(mainActivity, "Заполните ${item.title} параметрами", Toast.LENGTH_SHORT).show()
+            holder.isRunning.visibility = View.INVISIBLE
         }
     }
 
