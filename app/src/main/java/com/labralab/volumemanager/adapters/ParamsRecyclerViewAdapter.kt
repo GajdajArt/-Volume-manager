@@ -8,30 +8,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.labralab.volumemanager.App
 import com.labralab.volumemanager.R
 import com.labralab.volumemanager.models.DayParamsList
-import com.labralab.volumemanager.models.VolumeManager
 import com.labralab.volumemanager.models.VolumeParams
 import com.labralab.volumemanager.utils.TimeUtil
 import com.labralab.volumemanager.views.DayActivity
 import com.labralab.volumemanager.views.fragments.NewParamsFragment
+import com.labralab.volumemanager.volumeManager.VolumeManager
 import io.realm.Realm
-import java.util.*
+import javax.inject.Inject
 
 /**
  * Created by pc on 11.12.2017.
  */
-class ParamsRecyclerViewAdapter(items: List<VolumeParams>, state: Boolean) : RecyclerView.Adapter<ParamsRecyclerViewHolder>() {
+class ParamsRecyclerViewAdapter(var items: List<VolumeParams>, var state: Boolean) : RecyclerView.Adapter<ParamsRecyclerViewHolder>() {
 
-    var items: List<VolumeParams> = ArrayList()
-    var realm: Realm? = null
-    var state: Boolean? = false
+    @Inject
+    lateinit var realm: Realm
 
     init {
-
-        this.items = items.sortedWith(compareBy({ it.stopHours }, { it.stopMinutes }))
-        this.state = state
-        realm = Realm.getDefaultInstance()
+        App.appComponents.inject(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ParamsRecyclerViewHolder {

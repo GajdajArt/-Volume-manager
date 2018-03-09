@@ -4,6 +4,5 @@
     <color name="colorPrimaryDark">#646b79</color>
     <color name="colorAccent">#6fb1e1</color>
     <color name="done">#BDBDBD</color>
-    <color name="doing">#27ad60</color>
     <color name="background">#F5F5F5</color>
 </resources>

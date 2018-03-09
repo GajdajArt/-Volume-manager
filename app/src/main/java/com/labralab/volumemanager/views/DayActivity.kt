@@ -8,9 +8,10 @@ import com.labralab.volumemanager.views.fragments.DayFragment
 
 class DayActivity : AppCompatActivity() {
 
-    var dayFragment: DayFragment? = null
-    var dayTitle: String? = null
-    var dayParamList: DayParamsList? = null
+    private lateinit var dayTitle: String
+
+    lateinit var dayFragment: DayFragment
+    lateinit var dayParamList: DayParamsList
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

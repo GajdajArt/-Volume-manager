@@ -1,5 +1,6 @@
 package com.labralab.volumemanager.models
 
+import com.labralab.volumemanager.repository.Repository
 import io.realm.RealmList
 import io.realm.RealmObject
 

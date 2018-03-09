@@ -5,32 +5,40 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.Toast
+import com.labralab.volumemanager.App
 import com.labralab.volumemanager.R
 import com.labralab.volumemanager.adapters.MainRecyclerViewAdapter
 import com.labralab.volumemanager.models.DayParamsList
-import com.labralab.volumemanager.models.Repository
-import com.labralab.volumemanager.models.VolumeManager
+import com.labralab.volumemanager.repository.Repository
 import com.labralab.volumemanager.views.dialogs.NewDayDialog
+import com.labralab.volumemanager.volumeManager.VolumeManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import java.util.*
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
-    var lists: MutableList<DayParamsList> = ArrayList()
-    var adapter: MainRecyclerViewAdapter? = null
-    var repository: Repository? = Repository()
-    var volumeManager: VolumeManager? = null
+    private lateinit var lists: MutableList<DayParamsList>
+    private lateinit var adapter: MainRecyclerViewAdapter
+
+    @Inject
+    lateinit var repository: Repository
+    @Inject
+    lateinit var volumeManager: VolumeManager
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        //Injecting
+        App.appComponents.inject(this)
+
         setSupportActionBar(toolbar)
 
-        volumeManager = VolumeManager(applicationContext)
-
+        //get data
         lists = repository!!.getDayList()
+
+        //first hint
         showHint()
 
         val layoutManager = LinearLayoutManager(this)
@@ -42,33 +50,20 @@ class MainActivity : AppCompatActivity() {
                 LinearLayoutManager.VERTICAL))
 
         fab.setOnClickListener {
+
+            //creating new paramsList
             val newDayDialog = NewDayDialog()
             newDayDialog.show(this.supportFragmentManager, "TAG")
         }
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        menuInflater.inflate(R.menu.menu_main, menu)
-//        return true
-//    }
-//
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//
-//        val id = item.itemId
-//
-//
-//        return if (id == R.id.action_settings) {
-//            true
-//        } else super.onOptionsItemSelected(item)
-//
-//    }
 
     override fun onResume() {
         super.onResume()
         adapterNotifyDataSetChanged()
     }
 
+    //update data
     fun adapterNotifyDataSetChanged() {
 
         val repository = Repository()
@@ -79,9 +74,10 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun showHint(){
+    //first hint
+    private fun showHint() {
 
-        if(lists.isEmpty()){
+        if (lists.isEmpty()) {
             Toast.makeText(applicationContext, "Нажмите на \"+\" для сохдания списка настроек", Toast.LENGTH_SHORT)
                     .show()
         }

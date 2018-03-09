@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".views.DayActivity"></activity>
-        <receiver android:name=".models.TestReceiver">
+        <receiver android:name=".volumeManager.TestReceiver">
             <intent-filter>
                 <action android:name="volumeManager"></action>
             </intent-filter>

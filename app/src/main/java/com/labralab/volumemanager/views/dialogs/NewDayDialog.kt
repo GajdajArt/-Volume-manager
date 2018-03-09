@@ -9,7 +9,7 @@ import android.view.View
 import android.widget.EditText
 import com.labralab.volumemanager.R
 import com.labralab.volumemanager.models.DayParamsList
-import com.labralab.volumemanager.models.Repository
+import com.labralab.volumemanager.repository.Repository
 import com.labralab.volumemanager.views.MainActivity
 
 /**

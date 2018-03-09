@@ -18,11 +18,12 @@ import kotlinx.android.synthetic.main.fragment_day.*
 
 class DayFragment : Fragment() {
 
-    var title: String? = null
-    var dayActivity: DayActivity? = null
+    lateinit var title: String
 
-    var lists: ArrayList<VolumeParams> = ArrayList()
-    var adapter: ParamsRecyclerViewAdapter? = null
+    private lateinit var dayActivity: DayActivity
+
+    private lateinit var lists: ArrayList<VolumeParams>
+    private lateinit var adapter: ParamsRecyclerViewAdapter
 
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -34,7 +35,7 @@ class DayFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        dayActivity = activity as DayActivity?
+        dayActivity = (activity as DayActivity?)!!
 
 
         if (this.arguments != null) {
@@ -45,6 +46,7 @@ class DayFragment : Fragment() {
             lists.addAll(dayActivity!!.dayParamList!!.paramsList!!)
             val state = dayActivity!!.dayParamList!!.state
 
+            //Show hint
             showHint()
 
             val layoutManager = LinearLayoutManager(dayActivity)
@@ -69,6 +71,7 @@ class DayFragment : Fragment() {
         }
     }
 
+    //Show hint
     private fun showHint() {
 
         if (lists.isEmpty()) {

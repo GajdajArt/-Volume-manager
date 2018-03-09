@@ -9,26 +9,28 @@ import android.view.ViewGroup
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
+import com.labralab.volumemanager.App
 import com.labralab.volumemanager.R
 import com.labralab.volumemanager.models.DayParamsList
 import com.labralab.volumemanager.views.DayActivity
 import com.labralab.volumemanager.views.MainActivity
 import io.realm.Realm
-import java.util.*
+import javax.inject.Inject
 
 
-class MainRecyclerViewAdapter(items: List<DayParamsList>, mainActivity: MainActivity) : RecyclerView.Adapter<MainRecyclerViewHolder>() {
+class MainRecyclerViewAdapter(var items: List<DayParamsList>,
+                              private var mainActivity: MainActivity)
+    : RecyclerView.Adapter<MainRecyclerViewHolder>() {
 
-    var items: List<DayParamsList> = ArrayList()
-    var realm: Realm? = null
-    var mainActivity: MainActivity? = null
+
+    @Inject
+    lateinit var realm: Realm
 
     init {
-        this.items = items
-        this.mainActivity = mainActivity
-        realm = Realm.getDefaultInstance()
-
+        //Inject
+        App.appComponents.inject(this)
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainRecyclerViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.main_rv_item, parent, false)

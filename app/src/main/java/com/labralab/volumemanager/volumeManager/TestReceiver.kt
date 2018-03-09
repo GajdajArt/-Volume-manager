@@ -1,8 +1,9 @@
-package com.labralab.volumemanager.models
+package com.labralab.volumemanager.volumeManager
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.labralab.volumemanager.repository.Repository
 
 /**
  * Created by pc on 12.02.2018.

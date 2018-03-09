@@ -1,4 +1,4 @@
-package com.labralab.volumemanager.models
+package com.labralab.volumemanager.volumeManager
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
@@ -10,26 +10,34 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.os.Build
+import com.labralab.volumemanager.App
 import com.labralab.volumemanager.R
+import com.labralab.volumemanager.models.DayParamsList
+import com.labralab.volumemanager.models.VolumeParams
+import com.labralab.volumemanager.repository.Repository
 import com.labralab.volumemanager.utils.TimeUtil
 import com.labralab.volumemanager.views.MainActivity
 import io.realm.Realm
+import javax.inject.Inject
 
 
 class VolumeManager(var context: Context? = null) {
 
-    private var am: AlarmManager? = null
-    var realm: Realm = Realm.getDefaultInstance()
-    private var repository: Repository? = null
-    private var pi: PendingIntent? = null
+    private var am: AlarmManager
+    private lateinit var pi: PendingIntent
+
+    @Inject
+    lateinit var realm: Realm
+    @Inject
+    lateinit var repository: Repository
+
 
     init {
-
-        this.repository = Repository()
+        App.appComponents.inject(this)
         am = this.context!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     }
 
-
+    //Setting necessary params
     @SuppressLint("ServiceCast")
     fun setParams(params: VolumeParams, state: Int) {
 
@@ -67,8 +75,8 @@ class VolumeManager(var context: Context? = null) {
         }
     }
 
+    //Running alarm manager when it's necessary
     fun startAlarmManager(day: DayParamsList) {
-
 
         var pos = TimeUtil.getNearestTime(day.paramsList!!)
         var volParams = day!!.paramsList!![pos]
@@ -92,6 +100,7 @@ class VolumeManager(var context: Context? = null) {
         }
     }
 
+    //Cancel alarm
     fun cancelAlarm() {
 
         var intent = Intent("volumeManager")
@@ -112,6 +121,7 @@ class VolumeManager(var context: Context? = null) {
 
     }
 
+    //Setting default params when the other params are off
     fun setDefaultParams() {
 
         var mgr: AudioManager = this.context!!.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -126,6 +136,7 @@ class VolumeManager(var context: Context? = null) {
         repository!!.setDefaultParams(def)
     }
 
+    //Running notification
     fun showNotification(dayTitle: String, state: Int) {
 
         val stateStr = if (state == TimeUtil.TORN_ON) {
@@ -158,6 +169,7 @@ class VolumeManager(var context: Context? = null) {
         notificationManager.notify(1, notification)
     }
 
+    //Method for checking the state
     fun checkTheSate(day: DayParamsList) {
 
         val pos = TimeUtil.getNearestTime(day.paramsList!!)

@@ -91,10 +91,7 @@ class TimeUtil {
             stopTime.add(Calendar.MINUTE, volParams!!.stopMinutes)
 
 
-            //???
-//            if(startTime > stopTime){
-//                stopTime.add(Calendar.HOUR_OF_DAY, 24 - volParams!!.startHours)
-//            }
+
 
 
             if (startTime < nawTime) {
