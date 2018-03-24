@@ -2,7 +2,7 @@
     <string name="app_name">" Volume Manager"</string>
     <string name="action_settings">Settings</string>
     <string name="title">Название</string>
-    <string name="next">Дфлее</string>
+    <string name="next">Далее</string>
     <string name="cancel">Отмена</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -10,4 +10,12 @@
     <string name="delete">Удалить?</string>
     <string name="vibro">Вибрация</string>
     <string name="n">T</string>
+    <string name="mn">Пн</string>
+    <string name="tu">Вт</string>
+    <string name="we">Ср</string>
+    <string name="th">Чт</string>
+    <string name="fr">Пт</string>
+    <string name="sa">Сб</string>
+    <string name="su">Вс</string>
+
 </resources>

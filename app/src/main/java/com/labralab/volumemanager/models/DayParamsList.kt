@@ -7,6 +7,8 @@ import io.realm.RealmObject
 
 open class DayParamsList : RealmObject(){
 
+    var dayOfWeekList: RealmList<Int>? = RealmList()
+
     var title: String? = ""
     var paramsList: RealmList<VolumeParams>? = RealmList()
     var state: Boolean? = false

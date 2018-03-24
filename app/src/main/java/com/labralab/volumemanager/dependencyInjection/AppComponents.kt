@@ -4,6 +4,7 @@ import com.labralab.volumemanager.adapters.MainRecyclerViewAdapter
 import com.labralab.volumemanager.adapters.ParamsRecyclerViewAdapter
 import com.labralab.volumemanager.repository.Repository
 import com.labralab.volumemanager.views.MainActivity
+import com.labralab.volumemanager.views.fragments.DayFragment
 import com.labralab.volumemanager.volumeManager.VolumeManager
 import dagger.Component
 import javax.inject.Singleton
@@ -22,5 +23,6 @@ interface AppComponents {
     fun inject(repository: Repository)
     fun inject(volumeManager: VolumeManager)
     fun inject(paramsRecyclerViewAdapter: ParamsRecyclerViewAdapter)
+    fun inject(dayFragment: DayFragment)
 
 }

@@ -1,6 +1,7 @@
 package com.labralab.volumemanager.utils
 
 import android.os.Bundle
+import com.labralab.volumemanager.models.DayParamsList
 import com.labralab.volumemanager.models.VolumeParams
 import java.util.*
 
@@ -12,8 +13,17 @@ class TimeUtil {
 
     companion object {
 
-            const val TORN_OFF = 0
-            const val TORN_ON = 1
+        const val MONDAY = 1
+        const val TUESDAY = 2
+        const val WEDNESDAY = 3
+        const val THURSDAY = 4
+        const val FRIDAY = 5
+        const val SATURDAY = 6
+        const val SUNDAY = 7
+
+        const val TORN_OFF = 0
+        const val TORN_ON = 1
+
 
         fun getNearestTime(params: List<VolumeParams>): Int {
 
@@ -116,7 +126,7 @@ class TimeUtil {
         }
 
 
-        fun getState(volParams: VolumeParams?): Int{
+        fun getState(volParams: VolumeParams?): Int {
 
             val date = Date()
 
@@ -157,6 +167,24 @@ class TimeUtil {
                 state = TORN_ON
             }
             return state
+        }
+
+        fun isTheDayOfWeek(dayParamsList: DayParamsList): Boolean{
+
+            var isTheDay = false
+//        val date = Date()
+//        val time = Calendar.getInstance()
+//        time.time = date
+            var dayOfWeek = Calendar.DAY_OF_WEEK - 1
+
+            for (day in dayParamsList!!.dayOfWeekList!!) {
+                if (day == dayOfWeek) {
+                    isTheDay = true
+                }
+            }
+
+            return isTheDay
+
         }
     }
 }
