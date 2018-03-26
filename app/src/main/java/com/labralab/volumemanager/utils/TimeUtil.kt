@@ -172,10 +172,16 @@ class TimeUtil {
         fun isTheDayOfWeek(dayParamsList: DayParamsList): Boolean{
 
             var isTheDay = false
-//        val date = Date()
-//        val time = Calendar.getInstance()
-//        time.time = date
-            var dayOfWeek = Calendar.DAY_OF_WEEK - 1
+
+            val myDate = Calendar.getInstance()
+            val dow = myDate.get(Calendar.DAY_OF_WEEK)
+
+            var dayOfWeek = if(dow == 1){
+                7
+            }else{
+                dow - 1
+            }
+
 
             for (day in dayParamsList!!.dayOfWeekList!!) {
                 if (day == dayOfWeek) {
