@@ -101,6 +101,12 @@ class DayFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+    }
+
+
     //Show hint
     private fun showHint() {
 

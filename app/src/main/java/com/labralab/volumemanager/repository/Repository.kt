@@ -39,6 +39,17 @@ class Repository {
         var list: ArrayList<DayParamsList> = ArrayList()
         list.addAll(realmResult)
 
+        realm.executeTransaction {
+
+            for(day in list){
+
+                var sortParams = day.paramsList!!.sortedWith(compareBy({ it.stopHours }, { it.stopMinutes }))
+                day.paramsList!!.clear()
+                day.paramsList!!.addAll(sortParams)
+
+            }
+        }
+
         return list
     }
 

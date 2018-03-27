@@ -29,6 +29,7 @@ class ParamsRecyclerViewAdapter(var items: List<VolumeParams>, var state: Boolea
 
     init {
         App.appComponents.inject(this)
+        sortList()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ParamsRecyclerViewHolder {
@@ -70,6 +71,15 @@ class ParamsRecyclerViewAdapter(var items: List<VolumeParams>, var state: Boolea
 
     override fun getItemCount(): Int {
         return items.size
+    }
+
+    private fun sortList(){
+
+       realm.executeTransaction {
+
+           var sortParams = items!!.sortedWith(compareBy({ it.stopHours }, { it.stopMinutes }))
+           items = sortParams
+       }
     }
 
 
